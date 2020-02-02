@@ -48,7 +48,7 @@ func DumpProgramBank(rom []byte) {
 	skipCounter := 0
 	for i := 0; i < len(rom); {
 		addr := i
-		fmt.Printf("0x%04X\t", addr)
+		fmt.Printf("0x%04X:\t", addr+0x8000)
 
 		opecode := int(rom[i])
 		instruction, ok := InstructionMap[opecode]
