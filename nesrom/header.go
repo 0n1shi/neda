@@ -1,7 +1,5 @@
 package nesrom
 
-import "fmt"
-
 // MagicNumber ...
 type MagicNumber [4]byte
 
@@ -97,13 +95,4 @@ func (h *Header) GetCharacterBankSize() uint {
 // GetMapperType ...
 func (h *Header) GetMapperType() string {
 	return MapperTypeMap[int(h.GetMapper())]
-}
-
-// Dump ...
-func (h *Header) Dump() {
-	fmt.Printf("- ROM header\n")
-	fmt.Printf("\t- magic number: %s\n", h.MagicNumber)
-	fmt.Printf("\t- program bank count: %d (%d bytes)\n", h.ProgramBankCount, h.GetProgramBankSize())
-	fmt.Printf("\t- character bank count: %d (%d bytes)\n", h.CharacterBankCount, h.GetCharacterBankSize())
-	fmt.Printf("\t- mapper type: %d (%s)\n", h.GetMapper(), h.GetMapperType())
 }

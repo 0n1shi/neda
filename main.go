@@ -8,7 +8,7 @@ import (
 	"os"
 	"unsafe"
 
-	"github.com/k-onishi/nes-rom-analyzer/nesrom"
+	"github.com/k-onishi/neda/nesrom"
 )
 
 func main() {
@@ -42,13 +42,26 @@ func run() int {
 		fmt.Println(err.Error())
 		return 1
 	}
-
 	if !header.IsValid(header.MagicNumber) {
 		fmt.Println("invalid ROM")
 		return 1
 	}
 
-	header.Dump()
+	programROM := make([]byte, header.GetProgramBankSize())
+	_, err = fd.Read(programROM)
+	if err != nil {
+		fmt.Println(err.Error())
+		return 1
+	}
 
+	characterROM := make([]byte, header.GetCharacterBankSize())
+	_, err = fd.Read(characterROM)
+	if err != nil {
+		fmt.Println(err.Error())
+		return 1
+	}
+
+	nesrom.DumpHeader(header)
+	nesrom.DumpProgramBank(programROM)
 	return 0
 }
