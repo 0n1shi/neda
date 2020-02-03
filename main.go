@@ -8,7 +8,8 @@ import (
 	"os"
 	"unsafe"
 
-	"github.com/k-onishi/neda/nesrom"
+	"github.com/k-onishi/neda/lib"
+	"github.com/k-onishi/nesgo"
 )
 
 func main() {
@@ -31,7 +32,7 @@ func run() int {
 	}
 	defer fd.Close()
 
-	var header nesrom.Header
+	var header nesgo.Header
 	rawHeader := make([]byte, unsafe.Sizeof(header))
 	_, err = fd.Read(rawHeader)
 	if err != nil {
@@ -61,7 +62,7 @@ func run() int {
 		return 1
 	}
 
-	nesrom.DumpHeader(header)
-	nesrom.DumpProgramBank(programROM)
+	lib.DumpHeader(header)
+	lib.DumpProgramBank(programROM)
 	return 0
 }

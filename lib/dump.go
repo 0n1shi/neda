@@ -1,9 +1,13 @@
-package nesrom
+package lib
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/k-onishi/nesgo"
+)
 
 // DumpHeader ...
-func DumpHeader(h Header) {
+func DumpHeader(h nesgo.Header) {
 	fmt.Printf("magic number: %s\n", h.MagicNumber)
 	fmt.Printf("program bank count: %d (%d bytes)\n", h.ProgramBankCount, h.GetProgramBankSize())
 	fmt.Printf("character bank count: %d (%d bytes)\n", h.CharacterBankCount, h.GetCharacterBankSize())
@@ -11,33 +15,33 @@ func DumpHeader(h Header) {
 	fmt.Println()
 }
 
-func parseOperand(currentAddr int, addrType AddressingType, val int) string {
+func parseOperand(currentAddr int, addrType nesgo.AddressingType, val int) string {
 	switch addrType {
-	case AddressingTypeImmediate:
+	case nesgo.AddressingTypeImmediate:
 		return fmt.Sprintf("#$%02X", val)
-	case AddressingTypeAbsolute:
+	case nesgo.AddressingTypeAbsolute:
 		return fmt.Sprintf("$%04X", val)
-	case AddressingTypeZeroPage:
+	case nesgo.AddressingTypeZeroPage:
 		return fmt.Sprintf("$%02X", val)
-	case AddressingTypeImplied:
+	case nesgo.AddressingTypeImplied:
 		return ""
-	case AddressingTypeIndirect:
+	case nesgo.AddressingTypeIndirect:
 		return fmt.Sprintf("($%04X)", val)
-	case AddressingTypeAbsoluteX:
+	case nesgo.AddressingTypeAbsoluteX:
 		return fmt.Sprintf("$%04X, X", val)
-	case AddressingTypeAbsoluteY:
+	case nesgo.AddressingTypeAbsoluteY:
 		return fmt.Sprintf("$%04X, Y", val)
-	case AddressingTypeZeroPageX:
+	case nesgo.AddressingTypeZeroPageX:
 		return fmt.Sprintf("$%02X, X", val)
-	case AddressingTypeZeroPageY:
+	case nesgo.AddressingTypeZeroPageY:
 		return fmt.Sprintf("$%02X, Y", val)
-	case AddressingTypeIndirectX:
+	case nesgo.AddressingTypeIndirectX:
 		return fmt.Sprintf("($%02X, X)", val)
-	case AddressingTypeIndirectY:
+	case nesgo.AddressingTypeIndirectY:
 		return fmt.Sprintf("($%02X), Y", val)
-	case AddressingTypeRelative:
+	case nesgo.AddressingTypeRelative:
 		return fmt.Sprintf("$%04X", currentAddr+val)
-	case AddressingTypeAccumulator:
+	case nesgo.AddressingTypeAccumulator:
 		return "A"
 	}
 	panic("invalid addressing type")
@@ -51,7 +55,7 @@ func DumpProgramBank(rom []byte) {
 		fmt.Printf("0x%04X:\t", addr+0x8000)
 
 		opecode := int(rom[i])
-		instruction, ok := InstructionMap[opecode]
+		instruction, ok := nesgo.InstructionMap[opecode]
 		i++
 		if !ok {
 			skipCounter++
@@ -65,7 +69,7 @@ func DumpProgramBank(rom []byte) {
 			}
 		}
 
-		argCount := instruction.bytes - 1
+		argCount := instruction.Bytes - 1
 		args := make([]byte, argCount)
 		argValue := 0
 		for j := 0; j < argCount; j++ {
@@ -84,7 +88,7 @@ func DumpProgramBank(rom []byte) {
 			tabFormatStr = "\t\t"
 		}
 		fmt.Printf(tabFormatStr)
-		fmt.Printf("%s ", instruction.opcodeType)
-		fmt.Println(parseOperand(addr, instruction.addressingType, argValue))
+		fmt.Printf("%s ", nesgo.OpcodeMap[instruction.OpcodeType])
+		fmt.Println(parseOperand(addr, instruction.AddressingType, argValue))
 	}
 }
