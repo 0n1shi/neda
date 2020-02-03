@@ -1050,3 +1050,16 @@ var InstructionMap = map[int]Instruction{
 		cycle:          7,
 	},
 }
+
+// DecodeInfo ...
+type DecodeInfo struct {
+	Address     int
+	Instruction Instruction
+	Arg         int
+}
+
+// AccessRange ...
+type AccessRange struct {
+	Min int
+	Max int
+}
