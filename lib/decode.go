@@ -6,9 +6,11 @@ import (
 
 // DecodeInfo ...
 type DecodeInfo struct {
+	Value       int
 	Address     int
-	Instruction nesgo.Instruction
-	Arg         int
+	Instruction *nesgo.Instruction
+	Arg         *int
+	Bytes       []byte
 }
 
 // AccessRange ...

@@ -19,12 +19,10 @@ func main() {
 func run() int {
 	filePath := flag.String("rom", "", "rom file path")
 	flag.Parse()
-
 	if *filePath == "" {
 		fmt.Println(flag.ErrHelp.Error())
 		return 1
 	}
-
 	fd, err := os.Open(*filePath)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -32,6 +30,7 @@ func run() int {
 	}
 	defer fd.Close()
 
+	// read header
 	var header nesgo.Header
 	rawHeader := make([]byte, unsafe.Sizeof(header))
 	_, err = fd.Read(rawHeader)
@@ -48,6 +47,7 @@ func run() int {
 		return 1
 	}
 
+	// read program ROM
 	programROM := make([]byte, header.GetProgramBankSize())
 	_, err = fd.Read(programROM)
 	if err != nil {
@@ -55,6 +55,7 @@ func run() int {
 		return 1
 	}
 
+	// read character ROM
 	characterROM := make([]byte, header.GetCharacterBankSize())
 	_, err = fd.Read(characterROM)
 	if err != nil {
@@ -62,7 +63,8 @@ func run() int {
 		return 1
 	}
 
+	// show them
 	lib.DumpHeader(header)
-	lib.DumpProgramBank(programROM)
+	lib.DumpPBank(programROM)
 	return 0
 }
