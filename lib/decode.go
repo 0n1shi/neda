@@ -11,6 +11,7 @@ type DecodeInfo struct {
 	Instruction *nesgo.Instruction
 	Arg         *int
 	Bytes       []byte
+	isEndOfSub  bool
 }
 
 // AccessRange ...

@@ -16,10 +16,18 @@ func DumpHeader(h nesgo.Header) {
 }
 
 // PROMStartAddress ...
-const PROMStartAddress = 0xC000
+const PROMStartAddress = 0x8000
+
+func isEndOfSubroutinue(opcode nesgo.OpcodeType) bool {
+	if opcode == nesgo.OpcodeJMP || opcode == nesgo.OpcodeRTS || opcode == nesgo.OpcodeRTI {
+		return true
+	}
+	return false
+}
 
 func analyzePBank(rom []byte) []*DecodeInfo {
 	var decodeInfoList []*DecodeInfo
+	fmt.Printf("len of ROM: %04X\n", len(rom))
 	for i := 0; i < len(rom); {
 		info := DecodeInfo{}
 		info.Address = i + PROMStartAddress
@@ -30,6 +38,7 @@ func analyzePBank(rom []byte) []*DecodeInfo {
 		if !ok { // might be .db ?
 			info.Instruction = nil
 			info.Arg = nil
+			info.isEndOfSub = false
 		} else {
 			info.Instruction = &instruction
 
@@ -45,6 +54,7 @@ func analyzePBank(rom []byte) []*DecodeInfo {
 				i++
 			}
 			info.Arg = &argValue
+			info.isEndOfSub = isEndOfSubroutinue(instruction.OpcodeType)
 		}
 		decodeInfoList = append(decodeInfoList, &info)
 	}
@@ -114,5 +124,8 @@ func DumpPBank(rom []byte) {
 			fmt.Printf("%s", formatOperand(info.Address, info.Instruction.AddressingType, *info.Arg))
 		}
 		fmt.Println()
+		if info.isEndOfSub {
+			fmt.Println()
+		}
 	}
 }
