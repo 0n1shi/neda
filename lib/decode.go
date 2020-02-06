@@ -4,10 +4,13 @@ import (
 	"github.com/k-onishi/nesgo"
 )
 
+// Address ...
+type Address int
+
 // DecodeInfo ...
 type DecodeInfo struct {
 	Value       int
-	Address     int
+	Address     Address
 	Instruction *nesgo.Instruction
 	Arg         *int
 	Bytes       []byte
@@ -16,6 +19,13 @@ type DecodeInfo struct {
 
 // AccessRange ...
 type AccessRange struct {
-	Min int
-	Max int
+	Min       Address
+	Max       Address
+	IsInvalid bool
+}
+
+// AnalysisInfo ...
+type AnalysisInfo struct {
+	decodeInfoMap   map[Address]*DecodeInfo
+	accessRangeList []*AccessRange
 }

@@ -25,12 +25,13 @@ func isEndOfSubroutinue(opcode nesgo.OpcodeType) bool {
 	return false
 }
 
-func analyzePBank(rom []byte) []*DecodeInfo {
-	var decodeInfoList []*DecodeInfo
-	fmt.Printf("len of ROM: %04X\n", len(rom))
+func analyzePBank(rom []byte) *AnalysisInfo {
+	decodeInfoMap := make(map[Address]*DecodeInfo)
+	var accessRangeList []*AccessRange
+	accessRange := &AccessRange{}
 	for i := 0; i < len(rom); {
 		info := DecodeInfo{}
-		info.Address = i + PROMStartAddress
+		info.Address = Address(i + PROMStartAddress)
 		info.Value = int(rom[i])
 		info.Bytes = append(info.Bytes, rom[i]) // save byte code
 		instruction, ok := nesgo.InstructionMap[info.Value]
@@ -39,9 +40,9 @@ func analyzePBank(rom []byte) []*DecodeInfo {
 			info.Instruction = nil
 			info.Arg = nil
 			info.isEndOfSub = false
+			accessRange.IsInvalid = true
 		} else {
 			info.Instruction = &instruction
-
 			// fetch argment
 			argCount := instruction.Bytes - 1
 			args := make([]byte, argCount)
@@ -54,14 +55,25 @@ func analyzePBank(rom []byte) []*DecodeInfo {
 				i++
 			}
 			info.Arg = &argValue
-			info.isEndOfSub = isEndOfSubroutinue(instruction.OpcodeType)
+			if isEndOfSubroutinue(instruction.OpcodeType) {
+				info.isEndOfSub = true
+				accessRange.Max = info.Address
+				accessRangeList = append(accessRangeList, accessRange)
+				accessRange = &AccessRange{
+					Min: info.Address + 1,
+					Max: 0,
+				}
+			}
 		}
-		decodeInfoList = append(decodeInfoList, &info)
+		decodeInfoMap[info.Address] = &info
 	}
-	return decodeInfoList
+	return &AnalysisInfo{
+		decodeInfoMap:   decodeInfoMap,
+		accessRangeList: accessRangeList,
+	}
 }
 
-func formatAddress(addr int) string {
+func formatAddress(addr Address) string {
 	return fmt.Sprintf("0x%04X: ", addr)
 }
 
@@ -81,7 +93,7 @@ func formatOpcode(opcodeType nesgo.OpcodeType) string {
 	return fmt.Sprintf("%s ", nesgo.OpcodeMap[opcodeType])
 }
 
-func formatOperand(currentAddr int, addrType nesgo.AddressingType, val int) string {
+func formatOperand(currentAddr Address, addrType nesgo.AddressingType, val int) string {
 	switch addrType {
 	case nesgo.AddressingTypeImmediate:
 		return fmt.Sprintf("#$%02X", val)
@@ -106,7 +118,7 @@ func formatOperand(currentAddr int, addrType nesgo.AddressingType, val int) stri
 	case nesgo.AddressingTypeIndirectY:
 		return fmt.Sprintf("($%02X), Y", val)
 	case nesgo.AddressingTypeRelative:
-		return fmt.Sprintf("$%04X", currentAddr+val)
+		return fmt.Sprintf("$%04X", int(currentAddr)+val)
 	case nesgo.AddressingTypeAccumulator:
 		return "A"
 	}
@@ -115,8 +127,12 @@ func formatOperand(currentAddr int, addrType nesgo.AddressingType, val int) stri
 
 // DumpPBank ...
 func DumpPBank(rom []byte) {
-	infoList := analyzePBank(rom)
-	for _, info := range infoList {
+	analysisInfo := analyzePBank(rom)
+	for i := 0x8000; i < 0xFFFF; i++ {
+		info, ok := analysisInfo.decodeInfoMap[Address(i)]
+		if !ok {
+			continue
+		}
 		fmt.Printf("%s", formatAddress(info.Address))
 		fmt.Printf("%s", formatByteCodes(info.Bytes))
 		if info.Instruction != nil {
