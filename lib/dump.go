@@ -60,7 +60,7 @@ func analyzePBank(rom []byte) *AnalysisInfo {
 				accessRange.Max = info.Address
 				accessRangeList = append(accessRangeList, accessRange)
 				accessRange = &AccessRange{
-					Min: info.Address + 1,
+					Min: info.Address + Address(len(info.Bytes)),
 					Max: 0,
 				}
 			}
@@ -73,6 +73,63 @@ func analyzePBank(rom []byte) *AnalysisInfo {
 	}
 }
 
+func collectInvalidChunk(accessInfo *AnalysisInfo) *AnalysisInfo {
+	accessRangeList := accessInfo.accessRangeList
+	decodeInfoMap := accessInfo.decodeInfoMap
+	for _, accessRange := range accessRangeList {
+		// if it does not have .db pseudo opcode
+		if !accessRange.IsInvalid {
+			continue
+		}
+		// parse invalid opcode into byte codes
+		var byteList []byte
+		for addr := accessRange.Min; addr <= accessRange.Max; addr++ {
+			decodeInfo, ok := decodeInfoMap[addr]
+			delete(decodeInfoMap, addr)
+			if !ok {
+				continue
+			}
+			byteList = append(byteList, decodeInfo.Bytes...)
+		}
+		// put them back to the map
+		addrBase := accessRange.Min
+		var rowData []byte
+		var lastDecodeInfo *DecodeInfo
+		var addr Address
+		var lastAddr Address
+		for i, b := range byteList {
+			if len(rowData) == 0 {
+				addr = addrBase + Address(i)
+			}
+			rowData = append(rowData, b)
+			if len(rowData) > 3 {
+				decodeInfo := &DecodeInfo{
+					Bytes:   rowData,
+					Address: addr,
+				}
+				lastAddr = addr
+				decodeInfoMap[addr] = decodeInfo
+				lastDecodeInfo = decodeInfo
+				rowData = []byte{}
+			}
+		}
+		if len(rowData) > 0 {
+			addr := lastAddr + 4
+			decodeInfo := &DecodeInfo{
+				Bytes:   rowData,
+				Address: addr,
+			}
+			decodeInfoMap[accessRange.Max] = decodeInfo
+			lastDecodeInfo = decodeInfo
+		}
+		lastDecodeInfo.isEndOfSub = true
+	}
+	return &AnalysisInfo{
+		accessRangeList: accessRangeList,
+		decodeInfoMap:   decodeInfoMap,
+	}
+}
+
 func formatAddress(addr Address) string {
 	return fmt.Sprintf("0x%04X: ", addr)
 }
@@ -82,7 +139,7 @@ func formatByteCodes(codes []byte) string {
 	for _, v := range codes {
 		str += fmt.Sprintf("%02X ", v)
 	}
-	for i := 0; i < 3-len(codes); i++ {
+	for i := 0; i < 4-len(codes); i++ {
 		str += "   "
 	}
 	str += "  "
@@ -128,6 +185,7 @@ func formatOperand(currentAddr Address, addrType nesgo.AddressingType, val int) 
 // DumpPBank ...
 func DumpPBank(rom []byte) {
 	analysisInfo := analyzePBank(rom)
+	analysisInfo = collectInvalidChunk(analysisInfo)
 	for i := 0x8000; i < 0xFFFF; i++ {
 		info, ok := analysisInfo.decodeInfoMap[Address(i)]
 		if !ok {
@@ -138,6 +196,12 @@ func DumpPBank(rom []byte) {
 		if info.Instruction != nil {
 			fmt.Printf("%s", formatOpcode(info.Instruction.OpcodeType))
 			fmt.Printf("%s", formatOperand(info.Address, info.Instruction.AddressingType, *info.Arg))
+		} else {
+			varStr := ".db "
+			for _, b := range info.Bytes {
+				varStr += fmt.Sprintf("$%02X ", b)
+			}
+			fmt.Print(varStr)
 		}
 		fmt.Println()
 		if info.isEndOfSub {
