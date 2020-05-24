@@ -175,7 +175,7 @@ func formatOperand(currentAddr Address, addrType nesgo.AddressingType, val int) 
 	case nesgo.AddressingTypeIndirectY:
 		return fmt.Sprintf("($%02X), Y", val)
 	case nesgo.AddressingTypeRelative:
-		return fmt.Sprintf("$%04X", int(currentAddr)+val)
+		return fmt.Sprintf("$%04X", int(currentAddr+2)+int(int8(val)))
 	case nesgo.AddressingTypeAccumulator:
 		return "A"
 	}
