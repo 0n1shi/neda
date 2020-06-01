@@ -1,8 +1,4 @@
-package lib
-
-import (
-	"github.com/k-onishi/nesgo"
-)
+package neda
 
 // Address ...
 type Address int
@@ -11,7 +7,7 @@ type Address int
 type DecodeInfo struct {
 	Value       int
 	Address     Address
-	Instruction *nesgo.Instruction
+	Instruction *Instruction
 	Arg         *int
 	Bytes       []byte
 	isEndOfSub  bool

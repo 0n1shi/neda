@@ -1,13 +1,11 @@
-package lib
+package neda
 
 import (
 	"fmt"
-
-	"github.com/k-onishi/nesgo"
 )
 
 // DumpHeader ...
-func DumpHeader(h nesgo.Header) {
+func DumpHeader(h Header) {
 	fmt.Printf("magic number: %s\n", h.MagicNumber)
 	fmt.Printf("program bank count: %d (%d bytes)\n", h.ProgramBankCount, h.GetProgramBankSize())
 	fmt.Printf("character bank count: %d (%d bytes)\n", h.CharacterBankCount, h.GetCharacterBankSize())
@@ -18,8 +16,8 @@ func DumpHeader(h nesgo.Header) {
 // PROMStartAddress ...
 const PROMStartAddress = 0x8000
 
-func isEndOfSubroutinue(opcode nesgo.OpcodeType) bool {
-	if opcode == nesgo.OpcodeJMP || opcode == nesgo.OpcodeRTS || opcode == nesgo.OpcodeRTI {
+func isEndOfSubroutinue(opcode OpcodeType) bool {
+	if opcode == OpcodeJMP || opcode == OpcodeRTS || opcode == OpcodeRTI {
 		return true
 	}
 	return false
@@ -34,7 +32,7 @@ func analyzePBank(rom []byte) *AnalysisInfo {
 		info.Address = Address(i + PROMStartAddress)
 		info.Value = int(rom[i])
 		info.Bytes = append(info.Bytes, rom[i]) // save byte code
-		instruction, ok := nesgo.InstructionMap[info.Value]
+		instruction, ok := InstructionMap[info.Value]
 		i++
 		if !ok { // might be .db ?
 			info.Instruction = nil
@@ -146,37 +144,37 @@ func formatByteCodes(codes []byte) string {
 	return str
 }
 
-func formatOpcode(opcodeType nesgo.OpcodeType) string {
-	return fmt.Sprintf("%s ", nesgo.OpcodeMap[opcodeType])
+func formatOpcode(opcodeType OpcodeType) string {
+	return fmt.Sprintf("%s ", OpcodeMap[opcodeType])
 }
 
-func formatOperand(currentAddr Address, addrType nesgo.AddressingType, val int) string {
+func formatOperand(currentAddr Address, addrType AddressingType, val int) string {
 	switch addrType {
-	case nesgo.AddressingTypeImmediate:
+	case AddressingTypeImmediate:
 		return fmt.Sprintf("#$%02X", val)
-	case nesgo.AddressingTypeAbsolute:
+	case AddressingTypeAbsolute:
 		return fmt.Sprintf("$%04X", val)
-	case nesgo.AddressingTypeZeroPage:
+	case AddressingTypeZeroPage:
 		return fmt.Sprintf("$%02X", val)
-	case nesgo.AddressingTypeImplied:
+	case AddressingTypeImplied:
 		return ""
-	case nesgo.AddressingTypeIndirect:
+	case AddressingTypeIndirect:
 		return fmt.Sprintf("($%04X)", val)
-	case nesgo.AddressingTypeAbsoluteX:
+	case AddressingTypeAbsoluteX:
 		return fmt.Sprintf("$%04X, X", val)
-	case nesgo.AddressingTypeAbsoluteY:
+	case AddressingTypeAbsoluteY:
 		return fmt.Sprintf("$%04X, Y", val)
-	case nesgo.AddressingTypeZeroPageX:
+	case AddressingTypeZeroPageX:
 		return fmt.Sprintf("$%02X, X", val)
-	case nesgo.AddressingTypeZeroPageY:
+	case AddressingTypeZeroPageY:
 		return fmt.Sprintf("$%02X, Y", val)
-	case nesgo.AddressingTypeIndirectX:
+	case AddressingTypeIndirectX:
 		return fmt.Sprintf("($%02X, X)", val)
-	case nesgo.AddressingTypeIndirectY:
+	case AddressingTypeIndirectY:
 		return fmt.Sprintf("($%02X), Y", val)
-	case nesgo.AddressingTypeRelative:
+	case AddressingTypeRelative:
 		return fmt.Sprintf("$%04X", int(currentAddr+2)+int(int8(val)))
-	case nesgo.AddressingTypeAccumulator:
+	case AddressingTypeAccumulator:
 		return "A"
 	}
 	panic("invalid addressing type")
@@ -185,7 +183,7 @@ func formatOperand(currentAddr Address, addrType nesgo.AddressingType, val int) 
 // DumpPBank ...
 func DumpPBank(rom []byte) {
 	analysisInfo := analyzePBank(rom)
-	analysisInfo = collectInvalidChunk(analysisInfo)
+	//analysisInfo = collectInvalidChunk(analysisInfo)
 	for i := 0x8000; i < 0xFFFF; i++ {
 		info, ok := analysisInfo.decodeInfoMap[Address(i)]
 		if !ok {
