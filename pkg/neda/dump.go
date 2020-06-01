@@ -17,7 +17,7 @@ func DumpHeader(h Header) {
 const PROMStartAddress = 0x8000
 
 func isEndOfSubroutinue(opcode OpcodeType) bool {
-	if opcode == OpcodeJMP || opcode == OpcodeRTS || opcode == OpcodeRTI {
+	if opcode == OpcodeJMP || opcode == OpcodeRTS || opcode == OpcodeRTI || opcode == OpcodeJSR || opcode == OpcodeBRK {
 		return true
 	}
 	return false
@@ -183,7 +183,7 @@ func formatOperand(currentAddr Address, addrType AddressingType, val int) string
 // DumpPBank ...
 func DumpPBank(rom []byte) {
 	analysisInfo := analyzePBank(rom)
-	//analysisInfo = collectInvalidChunk(analysisInfo)
+	analysisInfo = collectInvalidChunk(analysisInfo)
 	for i := 0x8000; i < 0xFFFF; i++ {
 		info, ok := analysisInfo.decodeInfoMap[Address(i)]
 		if !ok {
