@@ -2,7 +2,24 @@
 
 A disassembler for NES ROM which written in Golang (still not perfect...).
 
-e.g.
+## Usage
+
+```bash
+$ neda -h
+Name: NEDA (NEs rom DisAssembler)
+Version: 0.7.0
+Usage of neda:
+        neda [Options ...]
+Options
+  -header-only
+        display header only
+  -rom string
+        rom file path
+```
+
+## Example
+
+Outout will be like below.
 
 ```asm
 magic number: NES
