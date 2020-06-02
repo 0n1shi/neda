@@ -11,18 +11,29 @@ import (
 	"github.com/k-onishi/neda/pkg/neda"
 )
 
+const version = "0.7.0"
+
 func main() {
 	os.Exit(run())
 }
 
 func run() int {
-	filePath := flag.String("rom", "", "rom file path")
+	flag.Usage = func() {
+		fmt.Printf("Name: NEDA (NEs rom DisAssembler)\nVersion: %s\nUsage of %s:\n\t%s [Options ...]\nOptions\n", version, os.Args[0], os.Args[0])
+		flag.PrintDefaults()
+	}
+	var (
+		romFilePath = flag.String("rom", "", "rom file path")
+		headerOnly  = flag.Bool("header-only", false, "display header only")
+	)
 	flag.Parse()
-	if *filePath == "" {
-		fmt.Println(flag.ErrHelp.Error())
+	if *romFilePath == "" {
+		flag.Usage()
 		return 1
 	}
-	fd, err := os.Open(*filePath)
+
+	// read file from path
+	fd, err := os.Open(*romFilePath)
 	if err != nil {
 		fmt.Println(err.Error())
 		return 1
@@ -64,6 +75,9 @@ func run() int {
 
 	// show them
 	neda.DumpHeader(header)
+	if *headerOnly {
+		return 0
+	}
 	neda.DumpPBank(programROM)
 	return 0
 }
