@@ -23,10 +23,16 @@ func run() int {
 		flag.PrintDefaults()
 	}
 	var (
+		ver         = flag.Bool("version", false, "Neda version")
 		romFilePath = flag.String("rom", "", "rom file path")
 		headerOnly  = flag.Bool("header-only", false, "display header only")
 	)
 	flag.Parse()
+	if *ver {
+		fmt.Printf("version: %s\n", version)
+		return 0
+	}
+
 	if *romFilePath == "" {
 		flag.Usage()
 		return 1
