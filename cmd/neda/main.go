@@ -19,11 +19,11 @@ func main() {
 
 func run() int {
 	flag.Usage = func() {
-		fmt.Printf("Name: NEDA (NEs rom DisAssembler)\nVersion: %s\nUsage of %s:\n\t%s [Options ...]\nOptions\n", version, os.Args[0], os.Args[0])
+		fmt.Printf("NEDA (NEs rom DisAssembler)\n\nversion: %s\nusage of %s:\n\t%s [options ...]\noptions\n", version, os.Args[0], os.Args[0])
 		flag.PrintDefaults()
 	}
 	var (
-		ver         = flag.Bool("version", false, "Neda version")
+		ver         = flag.Bool("version", false, "version")
 		romFilePath = flag.String("rom", "", "rom file path")
 		headerOnly  = flag.Bool("header-only", false, "display header only")
 		stupid      = flag.Bool("stupid", false, "skip checking likely invalid chunk")
