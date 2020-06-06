@@ -790,6 +790,12 @@ var InstructionMap = map[int]Instruction{
 		Bytes:          3,
 		Cycle:          4,
 	},
+	0xDD: {
+		OpcodeType:     OpcodeCMP,
+		AddressingType: AddressingTypeAbsoluteX,
+		Bytes:          3,
+		Cycle:          4,
+	},
 	0xDE: {
 		OpcodeType:     OpcodeDEC,
 		AddressingType: AddressingTypeAbsoluteX,
