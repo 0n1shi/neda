@@ -11,7 +11,7 @@ import (
 	"github.com/k-onishi/neda/pkg/neda"
 )
 
-const version = "0.7.1"
+const version = "0.7.2"
 
 func main() {
 	os.Exit(run())
@@ -26,6 +26,7 @@ func run() int {
 		ver         = flag.Bool("version", false, "Neda version")
 		romFilePath = flag.String("rom", "", "rom file path")
 		headerOnly  = flag.Bool("header-only", false, "display header only")
+		stupid      = flag.Bool("stupid", false, "skip checking likely invalid chunk")
 	)
 	flag.Parse()
 	if *ver {
@@ -84,6 +85,6 @@ func run() int {
 	if *headerOnly {
 		return 0
 	}
-	neda.DumpPBank(programROM)
+	neda.DumpPBank(programROM, *stupid)
 	return 0
 }

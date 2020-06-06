@@ -181,9 +181,11 @@ func formatOperand(currentAddr Address, addrType AddressingType, val int) string
 }
 
 // DumpPBank ...
-func DumpPBank(rom []byte) {
+func DumpPBank(rom []byte, stupid bool) {
 	analysisInfo := analyzePBank(rom)
-	analysisInfo = collectInvalidChunk(analysisInfo)
+	if !stupid {
+		analysisInfo = collectInvalidChunk(analysisInfo)
+	}
 	for i := 0x8000; i < 0xFFFF; i++ {
 		info, ok := analysisInfo.decodeInfoMap[Address(i)]
 		if !ok {
