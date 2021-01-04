@@ -1,15 +1,11 @@
 package neda
 
-// MagicNumber ...
 type MagicNumber [4]byte
 
-// ProgramBankSize ...
 const ProgramBankSize = 0x4000
 
-// CharacterBankSize ...
 const CharacterBankSize = 0x2000
 
-// MapperTypeMap ...
 var MapperTypeMap = map[int]string{
 	0: "NROM",
 	1: "SxROM, MMC1	",
@@ -62,7 +58,6 @@ var MapperTypeMap = map[int]string{
 	232: "Camerica/Codemasters Quattro	Multicarts",
 }
 
-// Header ...
 type Header struct {
 	MagicNumber        MagicNumber
 	ProgramBankCount   uint8
@@ -72,27 +67,22 @@ type Header struct {
 	Tmp                [8]byte
 }
 
-// IsValid ...
 func (h *Header) IsValid(n MagicNumber) bool {
 	return h.MagicNumber == n
 }
 
-// GetMapper ...
 func (h *Header) GetMapper() uint8 {
 	return ((h.MapperLowAndSetup & 0xf0) >> 4) | (h.MapperHighAndTmp & 0xf0)
 }
 
-// GetProgramBankSize ...
 func (h *Header) GetProgramBankSize() uint {
 	return uint(h.ProgramBankCount) * ProgramBankSize
 }
 
-// GetCharacterBankSize ...
 func (h *Header) GetCharacterBankSize() uint {
 	return uint(h.CharacterBankCount) * ProgramBankSize
 }
 
-// GetMapperType ...
 func (h *Header) GetMapperType() string {
 	return MapperTypeMap[int(h.GetMapper())]
 }

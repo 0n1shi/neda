@@ -1,6 +1,5 @@
 package neda
 
-// OpcodeType ...
 type OpcodeType int
 
 const (
@@ -62,7 +61,6 @@ const (
 	OpcodeBRK
 )
 
-// OpcodeMap ...
 var OpcodeMap = map[OpcodeType]string{
 	OpcodeLDA: "lda",
 	OpcodeLDX: "ldx",

@@ -1,6 +1,5 @@
 package neda
 
-// Instruction ...
 type Instruction struct {
 	OpcodeType     OpcodeType
 	AddressingType AddressingType
@@ -8,7 +7,6 @@ type Instruction struct {
 	Cycle          int
 }
 
-// InstructionMap ...
 var InstructionMap = map[int]Instruction{
 	0x00: {
 		OpcodeType:     OpcodeBRK,

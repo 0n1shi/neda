@@ -4,7 +4,6 @@ import (
 	"fmt"
 )
 
-// DumpHeader ...
 func DumpHeader(h Header) {
 	fmt.Printf("magic number: %s\n", h.MagicNumber)
 	fmt.Printf("program bank count: %d (%d bytes)\n", h.ProgramBankCount, h.GetProgramBankSize())
@@ -13,7 +12,6 @@ func DumpHeader(h Header) {
 	fmt.Println()
 }
 
-// PROMStartAddress ...
 const PROMStartAddress = 0x8000
 
 func isEndOfSubroutinue(opcode OpcodeType) bool {
@@ -180,7 +178,6 @@ func formatOperand(currentAddr Address, addrType AddressingType, val int) string
 	panic("invalid addressing type")
 }
 
-// DumpPBank ...
 func DumpPBank(rom []byte, stupid bool) {
 	analysisInfo := analyzePBank(rom)
 	if !stupid {

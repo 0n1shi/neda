@@ -1,6 +1,5 @@
 package neda
 
-// AddressingType ...
 type AddressingType int
 
 const (
