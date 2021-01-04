@@ -19,7 +19,7 @@ func main() {
 
 func run() int {
 	flag.Usage = func() {
-		fmt.Printf("NEDA (NEs rom DisAssembler)\n\nversion: %s\nusage of %s:\n\t%s [options ...]\noptions\n", version, os.Args[0], os.Args[0])
+		fmt.Printf("NEDA (NEs rom DisAssembler)\n\nversion: %s\nusage:\n\t%s [options ...]\noptions\n", version, os.Args[0])
 		flag.PrintDefaults()
 	}
 	var (
@@ -39,7 +39,7 @@ func run() int {
 		return 1
 	}
 
-	// read file from path
+	// read file from the path
 	fd, err := os.Open(*romFilePath)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -47,7 +47,7 @@ func run() int {
 	}
 	defer fd.Close()
 
-	// read header
+	// read the header
 	var header neda.Header
 	rawHeader := make([]byte, unsafe.Sizeof(header))
 	_, err = fd.Read(rawHeader)
@@ -64,7 +64,7 @@ func run() int {
 		return 1
 	}
 
-	// read program ROM
+	// read the program ROM
 	programROM := make([]byte, header.GetProgramBankSize())
 	_, err = fd.Read(programROM)
 	if err != nil {
@@ -72,19 +72,19 @@ func run() int {
 		return 1
 	}
 
-	// read character ROM
-	characterROM := make([]byte, header.GetCharacterBankSize())
-	_, err = fd.Read(characterROM)
-	if err != nil {
-		fmt.Println(err.Error())
-		return 1
-	}
+	// read the character ROM
+	// characterROM := make([]byte, header.GetCharacterBankSize())
+	// _, err = fd.Read(characterROM)
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	return 1
+	// }
 
-	// show them
+	// dump
 	neda.DumpHeader(header)
 	if *headerOnly {
 		return 0
 	}
-	neda.DumpPBank(programROM, *stupid)
+	neda.DumpProgramBank(programROM, *stupid)
 	return 0
 }

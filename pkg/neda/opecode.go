@@ -1,121 +1,121 @@
 package neda
 
-type OpcodeType int
+type OpecodeType int
 
 const (
-	OpcodeLDA = OpcodeType(iota)
-	OpcodeLDX
-	OpcodeLDY
-	OpcodeSTA
-	OpcodeSTX
-	OpcodeSTY
-	OpcodeTXA
-	OpcodeTYA
-	OpcodeTXS
-	OpcodeTAY
-	OpcodeTAX
-	OpcodeTSX
-	OpcodePHA
-	OpcodePHP
-	OpcodePLA
-	OpcodePLP
-	OpcodeADC
-	OpcodeSBC
-	OpcodeCPX
-	OpcodeCPY
-	OpcodeCMP
-	OpcodeAND
-	OpcodeEOR
-	OpcodeORA
-	OpcodeBIT
-	OpcodeASL
-	OpcodeLSR
-	OpcodeROL
-	OpcodeROR
-	OpcodeINX
-	OpcodeINY
-	OpcodeINC
-	OpcodeDEX
-	OpcodeDEY
-	OpcodeDEC
-	OpcodeCLC
-	OpcodeCLI
-	OpcodeCLV
-	OpcodeCLD
-	OpcodeSEC
-	OpcodeSEI
-	OpcodeSED
-	OpcodeJSR
-	OpcodeJMP
-	OpcodeRTI
-	OpcodeRTS
-	OpcodeBCC
-	OpcodeBCS
-	OpcodeBEQ
-	OpcodeBMI
-	OpcodeBNE
-	OpcodeBPL
-	OpcodeBVC
-	OpcodeBVS
-	OpcodeNOP
-	OpcodeBRK
+	OpecodeLDA = OpecodeType(iota)
+	OpecodeLDX
+	OpecodeLDY
+	OpecodeSTA
+	OpecodeSTX
+	OpecodeSTY
+	OpecodeTXA
+	OpecodeTYA
+	OpecodeTXS
+	OpecodeTAY
+	OpecodeTAX
+	OpecodeTSX
+	OpecodePHA
+	OpecodePHP
+	OpecodePLA
+	OpecodePLP
+	OpecodeADC
+	OpecodeSBC
+	OpecodeCPX
+	OpecodeCPY
+	OpecodeCMP
+	OpecodeAND
+	OpecodeEOR
+	OpecodeORA
+	OpecodeBIT
+	OpecodeASL
+	OpecodeLSR
+	OpecodeROL
+	OpecodeROR
+	OpecodeINX
+	OpecodeINY
+	OpecodeINC
+	OpecodeDEX
+	OpecodeDEY
+	OpecodeDEC
+	OpecodeCLC
+	OpecodeCLI
+	OpecodeCLV
+	OpecodeCLD
+	OpecodeSEC
+	OpecodeSEI
+	OpecodeSED
+	OpecodeJSR
+	OpecodeJMP
+	OpecodeRTI
+	OpecodeRTS
+	OpecodeBCC
+	OpecodeBCS
+	OpecodeBEQ
+	OpecodeBMI
+	OpecodeBNE
+	OpecodeBPL
+	OpecodeBVC
+	OpecodeBVS
+	OpecodeNOP
+	OpecodeBRK
 )
 
-var OpcodeMap = map[OpcodeType]string{
-	OpcodeLDA: "lda",
-	OpcodeLDX: "ldx",
-	OpcodeLDY: "ldy",
-	OpcodeSTA: "sta",
-	OpcodeSTX: "stx",
-	OpcodeSTY: "sty",
-	OpcodeTXA: "txa",
-	OpcodeTYA: "tya",
-	OpcodeTXS: "txs",
-	OpcodeTAY: "tay",
-	OpcodeTAX: "tax",
-	OpcodeTSX: "tsx",
-	OpcodePHA: "pha",
-	OpcodePHP: "php",
-	OpcodePLA: "pla",
-	OpcodePLP: "plp",
-	OpcodeADC: "adc",
-	OpcodeSBC: "sbc",
-	OpcodeCPX: "cpx",
-	OpcodeCPY: "cpy",
-	OpcodeCMP: "cmp",
-	OpcodeAND: "and",
-	OpcodeEOR: "eor",
-	OpcodeORA: "ora",
-	OpcodeBIT: "bit",
-	OpcodeASL: "asl",
-	OpcodeLSR: "lsr",
-	OpcodeROL: "rol",
-	OpcodeROR: "ror",
-	OpcodeINX: "inx",
-	OpcodeINY: "iny",
-	OpcodeINC: "inc",
-	OpcodeDEX: "dex",
-	OpcodeDEY: "dey",
-	OpcodeDEC: "dec",
-	OpcodeCLC: "clc",
-	OpcodeCLI: "cli",
-	OpcodeCLV: "clv",
-	OpcodeCLD: "cld",
-	OpcodeSEC: "sec",
-	OpcodeSEI: "sei",
-	OpcodeSED: "sed",
-	OpcodeJSR: "jsr",
-	OpcodeJMP: "jmp",
-	OpcodeRTI: "rti",
-	OpcodeRTS: "rts",
-	OpcodeBCC: "bcc",
-	OpcodeBCS: "bcs",
-	OpcodeBEQ: "beq",
-	OpcodeBMI: "bmi",
-	OpcodeBNE: "bne",
-	OpcodeBPL: "bpl",
-	OpcodeBVC: "bvc",
-	OpcodeBVS: "bvs",
-	OpcodeNOP: "nop",
-	OpcodeBRK: "brk",
+var OpecodeMap = map[OpecodeType]string{
+	OpecodeLDA: "lda",
+	OpecodeLDX: "ldx",
+	OpecodeLDY: "ldy",
+	OpecodeSTA: "sta",
+	OpecodeSTX: "stx",
+	OpecodeSTY: "sty",
+	OpecodeTXA: "txa",
+	OpecodeTYA: "tya",
+	OpecodeTXS: "txs",
+	OpecodeTAY: "tay",
+	OpecodeTAX: "tax",
+	OpecodeTSX: "tsx",
+	OpecodePHA: "pha",
+	OpecodePHP: "php",
+	OpecodePLA: "pla",
+	OpecodePLP: "plp",
+	OpecodeADC: "adc",
+	OpecodeSBC: "sbc",
+	OpecodeCPX: "cpx",
+	OpecodeCPY: "cpy",
+	OpecodeCMP: "cmp",
+	OpecodeAND: "and",
+	OpecodeEOR: "eor",
+	OpecodeORA: "ora",
+	OpecodeBIT: "bit",
+	OpecodeASL: "asl",
+	OpecodeLSR: "lsr",
+	OpecodeROL: "rol",
+	OpecodeROR: "ror",
+	OpecodeINX: "inx",
+	OpecodeINY: "iny",
+	OpecodeINC: "inc",
+	OpecodeDEX: "dex",
+	OpecodeDEY: "dey",
+	OpecodeDEC: "dec",
+	OpecodeCLC: "clc",
+	OpecodeCLI: "cli",
+	OpecodeCLV: "clv",
+	OpecodeCLD: "cld",
+	OpecodeSEC: "sec",
+	OpecodeSEI: "sei",
+	OpecodeSED: "sed",
+	OpecodeJSR: "jsr",
+	OpecodeJMP: "jmp",
+	OpecodeRTI: "rti",
+	OpecodeRTS: "rts",
+	OpecodeBCC: "bcc",
+	OpecodeBCS: "bcs",
+	OpecodeBEQ: "beq",
+	OpecodeBMI: "bmi",
+	OpecodeBNE: "bne",
+	OpecodeBPL: "bpl",
+	OpecodeBVC: "bvc",
+	OpecodeBVS: "bvs",
+	OpecodeNOP: "nop",
+	OpecodeBRK: "brk",
 }

@@ -14,14 +14,18 @@ func DumpHeader(h Header) {
 
 const PROMStartAddress = 0x8000
 
-func isEndOfSubroutinue(opcode OpcodeType) bool {
-	if opcode == OpcodeJMP || opcode == OpcodeRTS || opcode == OpcodeRTI || opcode == OpcodeJSR || opcode == OpcodeBRK {
-		return true
+var SubRoutinueEnder = []OpecodeType{OpecodeJMP, OpecodeRTS, OpecodeRTI, OpecodeJSR, OpecodeBRK}
+
+func isEndOfSubRoutinue(opecode OpecodeType) bool {
+	for _, ender := range SubRoutinueEnder {
+		if opecode == ender {
+			return true
+		}
 	}
 	return false
 }
 
-func analyzePBank(rom []byte) *AnalysisInfo {
+func analyzeProgramBank(rom []byte) *AnalysisInfo {
 	decodeInfoMap := make(map[Address]*DecodeInfo)
 	var accessRangeList []*AccessRange
 	accessRange := &AccessRange{}
@@ -51,7 +55,7 @@ func analyzePBank(rom []byte) *AnalysisInfo {
 				i++
 			}
 			info.Arg = &argValue
-			if isEndOfSubroutinue(instruction.OpcodeType) {
+			if isEndOfSubRoutinue(instruction.OpecodeType) {
 				info.isEndOfSub = true
 				accessRange.Max = info.Address
 				accessRangeList = append(accessRangeList, accessRange)
@@ -73,11 +77,11 @@ func collectInvalidChunk(accessInfo *AnalysisInfo) *AnalysisInfo {
 	accessRangeList := accessInfo.accessRangeList
 	decodeInfoMap := accessInfo.decodeInfoMap
 	for _, accessRange := range accessRangeList {
-		// if it does not have .db pseudo opcode
+		// if it does not have .db pseudo opecode
 		if !accessRange.IsInvalid {
 			continue
 		}
-		// parse invalid opcode into byte codes
+		// parse invalid opecode into byte codes
 		var byteList []byte
 		for addr := accessRange.Min; addr <= accessRange.Max; addr++ {
 			decodeInfo, ok := decodeInfoMap[addr]
@@ -126,60 +130,8 @@ func collectInvalidChunk(accessInfo *AnalysisInfo) *AnalysisInfo {
 	}
 }
 
-func formatAddress(addr Address) string {
-	return fmt.Sprintf("0x%04X: ", addr)
-}
-
-func formatByteCodes(codes []byte) string {
-	str := ""
-	for _, v := range codes {
-		str += fmt.Sprintf("%02X ", v)
-	}
-	for i := 0; i < 4-len(codes); i++ {
-		str += "   "
-	}
-	str += "  "
-	return str
-}
-
-func formatOpcode(opcodeType OpcodeType) string {
-	return fmt.Sprintf("%s ", OpcodeMap[opcodeType])
-}
-
-func formatOperand(currentAddr Address, addrType AddressingType, val int) string {
-	switch addrType {
-	case AddressingTypeImmediate:
-		return fmt.Sprintf("#$%02X", val)
-	case AddressingTypeAbsolute:
-		return fmt.Sprintf("$%04X", val)
-	case AddressingTypeZeroPage:
-		return fmt.Sprintf("$%02X", val)
-	case AddressingTypeImplied:
-		return ""
-	case AddressingTypeIndirect:
-		return fmt.Sprintf("($%04X)", val)
-	case AddressingTypeAbsoluteX:
-		return fmt.Sprintf("$%04X, X", val)
-	case AddressingTypeAbsoluteY:
-		return fmt.Sprintf("$%04X, Y", val)
-	case AddressingTypeZeroPageX:
-		return fmt.Sprintf("$%02X, X", val)
-	case AddressingTypeZeroPageY:
-		return fmt.Sprintf("$%02X, Y", val)
-	case AddressingTypeIndirectX:
-		return fmt.Sprintf("($%02X, X)", val)
-	case AddressingTypeIndirectY:
-		return fmt.Sprintf("($%02X), Y", val)
-	case AddressingTypeRelative:
-		return fmt.Sprintf("$%04X", int(currentAddr+2)+int(int8(val)))
-	case AddressingTypeAccumulator:
-		return "A"
-	}
-	panic("invalid addressing type")
-}
-
-func DumpPBank(rom []byte, stupid bool) {
-	analysisInfo := analyzePBank(rom)
+func DumpProgramBank(rom []byte, stupid bool) {
+	analysisInfo := analyzeProgramBank(rom)
 	if !stupid {
 		analysisInfo = collectInvalidChunk(analysisInfo)
 	}
@@ -191,7 +143,7 @@ func DumpPBank(rom []byte, stupid bool) {
 		fmt.Printf("%s", formatAddress(info.Address))
 		fmt.Printf("%s", formatByteCodes(info.Bytes))
 		if info.Instruction != nil {
-			fmt.Printf("%s", formatOpcode(info.Instruction.OpcodeType))
+			fmt.Printf("%s", formatOpecode(info.Instruction.OpecodeType))
 			fmt.Printf("%s", formatOperand(info.Address, info.Instruction.AddressingType, *info.Arg))
 		} else {
 			varStr := ".db "
