@@ -1,5 +1,4 @@
 # NES Assembly
-
 ## Register
 
 |notation|name|
@@ -29,9 +28,7 @@
 |Relative|aaaa|
 |Accumulator|A|
 
-### Accumulator
-
-## Referances
+## Refs
 
 - [Topic: SNES Assembly: #$ vs # vs $](https://www.romhacking.net/forum/index.php?topic=16663.0)
 - [Assembly In One Step](https://dwheeler.com/6502/oneelkruns/asm1step.html)
